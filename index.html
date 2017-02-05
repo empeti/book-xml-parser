@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Book XML parser with handlebar</title>
+    <script type="text/javascript" src="assets/js/handlebars.js"></script>
+    <script
+            src="assets/js/jquery-3.1.1.min.js"></script>
+    <script type="text/javascript">
+        $().ready(
+            function(){
+                var bookTemplate   = $("#book-entry-template").html();
+                $.ajax({
+                    type: "GET",
+                    url: "source/books.xml",
+                    dataType: "xml",
+                    success: function (xml) {
+                        xml = (new XMLSerializer()).serializeToString(xml);
+                        var xmlDoc = $.parseXML(xml),
+                            $xml = $(xmlDoc);
+                        console.log($xml.find('book'));
+                        $xml.find("book").each(function () {
+                            var book = {
+                                title: $(this).find("title").text(),
+                                isbn: $(this).attr("isbn13"),
+                                author: $(this).find("author").text(),
+                                publisher: $(this).find("publisher").text()
+                            };
+                            var template = Handlebars.compile(bookTemplate, book);
+                            $("#book-list").append(template(book));
+                        });
+                    }
+                });
+            }
+        );
+
+    </script>
+    <script id="book-entry-template" type="text/x-handlebars-template">
+        <div class="entry">
+            <h3>{{title}}</h3>
+            <div class="body">
+                <p>author: {{author}}</p>
+                <p>isbn: {{isbn}}</p>
+                <p>publisher: {{publisher}}</p>
+            </div>
+        </div>
+    </script>
+</head>
+<body>
+    <div id="content">
+        <div id="books">
+            <h2>Book list</h2>
+            <div id="book-list"></div>
+        </div>
+    </div>
+</body>
+</html>
