@@ -15,25 +15,24 @@
                 var XML_FILE_PATH  = "source/books.xml";                // xml file to parse
 
                 /**
-                 *  Get the xml and parse
+                 *  Get the xml
                  */
                 $.ajax({
                     type: "GET",
                     url: XML_FILE_PATH,
                     dataType: "xml",
                     success: function (xml) {
-                        var $xml = XmlParser.getParsedXMLString(xml);
-                        $xml.find("book").each(function () {
-                            addBookToList($(this));
-                        });
+                        processXML(xml);
                     }
                 });
 
-                /**
-                 * Add a book to book list
-                 *
-                 * @param xmlBook
-                 */
+                function processXML(xml){
+                    var $xml = XmlParser.getParsedXMLString(xml);
+                    $xml.find("book").each(function () {
+                        addBookToList($(this));
+                    });
+                }
+
                 function addBookToList(xmlBook){
                     var book        = BookTransformer.transformFromXML($(xmlBook));
                     var template    = Handlebars.compile(bookTemplate, book);
